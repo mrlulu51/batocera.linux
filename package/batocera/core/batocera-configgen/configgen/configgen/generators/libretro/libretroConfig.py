@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os;
 import json
 import logging
 import subprocess
@@ -223,8 +224,16 @@ def createLibretroConfig(
 
     retroarchConfig['sort_savefiles_enable'] = 'false'     # ensure we don't save system.name + core
     retroarchConfig['sort_savestates_enable'] = 'false'    # ensure we don't save system.name + core
-    retroarchConfig['savestate_directory'] = SAVES / system.name
-    retroarchConfig['savefile_directory'] = SAVES / system.name
+
+    esgi_savepath = os.environ.get("ESGI_SAVEPATH")
+
+    if(esgi_savepath) {
+        retroarchConfig['savestate_directory'] = esgi_savepath
+        retroarchConfig['savefile_directory'] = esgi_savepath
+    } else {
+        retroarchConfig['savestate_directory'] = SAVES / system.name
+        retroarchConfig['savefile_directory'] = SAVES / system.name
+    }
 
     # Forced values (so that if the config is not correct, fix it)
     if system.config.core == 'tgbdual':
