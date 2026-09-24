@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os;
+import os
 import json
 import logging
 import subprocess
@@ -227,13 +227,12 @@ def createLibretroConfig(
 
     esgi_savepath = os.environ.get("ESGI_SAVEPATH")
 
-    if(esgi_savepath) {
-        retroarchConfig['savestate_directory'] = esgi_savepath
-        retroarchConfig['savefile_directory'] = esgi_savepath
-    } else {
+    if(esgi_savepath):
+        retroarchConfig['savestate_directory'] = str(esgi_savepath)
+        retroarchConfig['savefile_directory'] = str(esgi_savepath)
+    else:
         retroarchConfig['savestate_directory'] = SAVES / system.name
         retroarchConfig['savefile_directory'] = SAVES / system.name
-    }
 
     # Forced values (so that if the config is not correct, fix it)
     if system.config.core == 'tgbdual':
