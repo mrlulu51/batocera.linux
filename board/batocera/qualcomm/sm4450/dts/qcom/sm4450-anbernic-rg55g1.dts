@@ -50,6 +50,10 @@
 		compatible = "pwm-backlight";
 		/* Stock Android: PM6450 LPG channel 0, 100 us period. */
 		pwms = <&pm6450_pwm 0 100000>;
+		// Batocera - the LED driver only shuts down with the PWM pin held low, so park it as a GPIO when off
+		pinctrl-0 = <&backlight_pwm_default>;
+		pinctrl-1 = <&backlight_pwm_sleep>;
+		pinctrl-names = "default", "sleep";
 
 		brightness-levels = <4095 0>;
 		num-interpolated-steps = <4095>;
@@ -1590,8 +1594,7 @@
 				pinctrl-0 = <&panel_reset_default>;
 				pinctrl-names = "default";
 
-				// Batocera - labwc rotates the single output itself (display.rotate)
-				// rotation = <90>;
+				rotation = <90>;
 
 				port {
 					panel_in: endpoint {
@@ -2045,6 +2048,8 @@
 			reset-gpios = <&tlmm 12 GPIO_ACTIVE_LOW>;
 
 			vcc-supply = <&vreg_l4e_3p0>;
+			// Batocera - IO runs off the panel 1.8V rail, hold it or the touch dies with the display
+			iovcc-supply = <&vreg_panel_1p8>;
 
 			pinctrl-0 = <&ts_active>;
 			pinctrl-1 = <&ts_int_suspend &ts_reset_suspend>;
@@ -2643,13 +2648,19 @@
 				qcom,drive-strength = <PMIC_GPIO_STRENGTH_MED>;
 				bias-disable;
 			};
+
+			backlight_pwm_sleep: backlight-pwm-sleep-state {
+				pins = "gpio7";
+				function = "normal";
+				output-low;
+				power-source = <1>;
+				bias-disable;
+			};
 		};
 
 		pm6450_pwm: pwm {
 			compatible = "qcom,pm6450-pwm";
 			#pwm-cells = <2>;
-			pinctrl-0 = <&backlight_pwm_default>;
-			pinctrl-names = "default";
 		};
 	};
 
